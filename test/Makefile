@@ -1,7 +1,7 @@
 TOPLEVEL_LANG = vhdl
-TOPLEVEL = demux
-VHDL_SOURCES = ../src/demux.vhd
-MODULE = test_demux
+TOPLEVEL = ula_numeric
+VHDL_SOURCES = ../src/ula_numeric.vhd
+MODULE = test_ula
 
 SIM = ghdl
 SIM_ARGS= --vcd=sim.vcd
