@@ -1,7 +1,7 @@
 TOPLEVEL_LANG = vhdl
-TOPLEVEL = ula_numeric
-VHDL_SOURCES = ../src/ula_numeric.vhd
-MODULE = test_ula
+TOPLEVEL = reg_file_mips
+VHDL_SOURCES = ../src/reg_file_mips.vhd
+MODULE = test_reg_file
 
 SIM = ghdl
 SIM_ARGS= --vcd=sim.vcd
