@@ -9,15 +9,34 @@ on:
       - test/**
 
 jobs:
-  quartus:
-    name: Cocotb test
+  cocotb:
+    name: Cocotb (${{ matrix.name }})
     runs-on: ubuntu-latest
     container:
       image: rafaelcorsi/pl-descomp-cocotb:latest
       options: -v ${{ github.workspace }}:/var/www
-    steps:
-    - name: Check out the repo
-      uses: actions/checkout@v3
 
-    - name: Run test
-      run: make -C /var/www/test/
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ROM
+            toplevel: mips_rom
+            module: test_mips_rom
+            sources: ../src/mips_rom.vhd
+
+          - name: RAM
+            toplevel: mips_ram
+            module: test_mips_ram
+            sources: ../src/mips_ram.vhd
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run cocotb test (${{ matrix.name }})
+        run: |
+          make -C /var/www/test/ \
+            TOPLEVEL=${{ matrix.toplevel }} \
+            MODULE=${{ matrix.module }} \
+            VHDL_SOURCES=${{ matrix.sources }}
