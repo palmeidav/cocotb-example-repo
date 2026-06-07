@@ -33,6 +33,21 @@ quartus/*example*
 quartus/*sopc_*
 # *.sdc # I want those timing files
 
+# ignore Quartus generated folders na raiz do projeto
+db/
+incremental_db/
+output_files/
+*.qpf
+*.rpt
+*.done
+*.summary
+*.pin
+*.sof
+*.pof
+*.smsg
+*.jdi
+*.qws
+
 # ignore Quartus II generated folders
 quartus/*/db/
 quartus/*/incremental_db/
