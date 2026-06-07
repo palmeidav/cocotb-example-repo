@@ -23,19 +23,14 @@ architecture bhv of mips_word_toplevel is
     end component;
 
     component mips_ram is
-        generic (
-            dataWidth       : natural := 32;
-            addrWidth       : natural := 32;
-            memoryAddrWidth : natural := 10
-        );
         port (
             clk      : in  std_logic;
             addr     : in  std_logic_vector(31 downto 0);
             data_in  : in  std_logic_vector(31 downto 0);
             data_out : out std_logic_vector(31 downto 0);
             word_we  : in  std_logic;
-            byte_we  : in  std_logic := '0';
-            half_we  : in  std_logic := '0';
+            byte_we  : in  std_logic;
+            half_we  : in  std_logic;
             reset    : in  std_logic
         );
     end component;
