@@ -34,7 +34,7 @@ async def test_mips_rom(dut):
         20: "00001000000000000000000000000000",  # j     0
     }
 
-    # Verifica toda a ROM. Como addrWidth=10, são 1024 endereços.
+    # Verifica toda a ROM. Como addrWidth=6, são 64 endereços.
     for addr in range(2 ** len(dut.addr)):
         dut.addr.value = addr
         await Timer(1, units="ns")

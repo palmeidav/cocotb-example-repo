@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity mips_rom is
    generic (
           dataWidth: natural := 32;
-          addrWidth: natural := 10
+          addrWidth: natural := 6   -- 64 palavras (suficiente para o programa)
    );
    port (
           addr : in  std_logic_vector (addrWidth-1 DOWNTO 0);

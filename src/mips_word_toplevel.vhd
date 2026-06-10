@@ -24,8 +24,8 @@ architecture bhv of mips_word_toplevel is
     -- Componentes
     -- ----------------------------------------------------------
     component mips_rom is
-        generic (dataWidth : natural := 32; addrWidth : natural := 10);
-        port (addr : in  std_logic_vector(9  downto 0);
+        generic (dataWidth : natural := 32; addrWidth : natural := 6);
+        port (addr : in  std_logic_vector(5  downto 0);
               data : out std_logic_vector(31 downto 0));
     end component;
 
@@ -362,7 +362,7 @@ begin
     -- Instancias
     -- ----------------------------------------------------------
     i_rom : mips_rom
-        port map (addr => pc(11 downto 2), data => inst);
+        port map (addr => pc(7 downto 2), data => inst);
 
     i_rf : reg_file_mips
         port map (clk    => clk,    rst    => reset,
