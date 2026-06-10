@@ -504,9 +504,10 @@ begin
 
     -- -------------------------------------------------------
     -- Saidas de debug para a FPGA
-    -- LEDs vermelhos: PC[11:2] (qual instrucao esta executando)
+    -- LEDs vermelhos: resultado da ULA (bits 9..0)
+    -- Mostra o resultado da operacao atual sendo executada
     -- -------------------------------------------------------
-    ledr <= pc(11 downto 2);
+    ledr <= alu_out_s(9 downto 0);
 
     -- Display 7-segmentos: nibble baixo e alto do PC
     -- Segmentos: gfedcba (ativo em '0' no DE10-Standard)
