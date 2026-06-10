@@ -151,6 +151,17 @@ architecture bhv of mips_word_toplevel is
     signal mem_byte_off_s: std_logic_vector(31 downto 0);
     signal mem_half_off_s: std_logic_vector(31 downto 0);
 
+    -- ----------------------------------------------------------
+    -- Divisor de clock: 50 MHz / 10_000_000 = 5 instrucoes/s
+    -- ----------------------------------------------------------
+    signal div_cnt       : unsigned(23 downto 0) := (others => '0');
+    signal tick          : std_logic;
+
+    -- Sinais de escrita gateados pelo tick
+    signal word_we_gated : std_logic;
+    signal byte_we_gated : std_logic;
+    signal half_we_gated : std_logic;
+
 begin
 
     -- ----------------------------------------------------------
@@ -323,13 +334,36 @@ begin
         end case;
     end process;
 
-    -- Registrador PC
+    -- Divisor de clock
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            div_cnt <= (others => '0');
+        elsif rising_edge(clk) then
+            if div_cnt = 9_999_999 then
+                div_cnt <= (others => '0');
+            else
+                div_cnt <= div_cnt + 1;
+            end if;
+        end if;
+    end process;
+
+    tick <= '1' when div_cnt = 0 else '0';
+
+    -- Sinais de escrita na RAM gateados pelo tick
+    word_we_gated <= word_we and tick;
+    byte_we_gated <= byte_we and tick;
+    half_we_gated <= half_we and tick;
+
+    -- Registrador PC (avanca so no tick)
     process(clk, reset)
     begin
         if reset = '1' then
             pc <= (others => '0');
         elsif rising_edge(clk) then
-            pc <= pc_next;
+            if tick = '1' then
+                pc <= pc_next;
+            end if;
         end if;
     end process;
 
@@ -368,7 +402,7 @@ begin
         port map (clk    => clk,    rst    => reset,
                   A_addr => rs,     B_addr => rt,
                   W_addr => w_addr_s, W_data => w_data_s,
-                  W_en   => write_enable,
+                  W_en   => write_enable and tick,
                   A_data => a_data_s, B_data => b_data_s);
 
     i_se : sign_extender
@@ -385,8 +419,8 @@ begin
     i_ram : mips_ram
         port map (clk => clk, addr => alu_out_s,
                   data_in => b_data_s, data_out => mem_out_s,
-                  word_we => word_we, byte_we => byte_we,
-                  half_we => half_we, reset => reset);
+                  word_we => word_we_gated, byte_we => byte_we_gated,
+                  half_we => half_we_gated, reset => reset);
 
     -- ----------------------------------------------------------
     -- Saidas de debug: LEDs = ULA[9:0], displays = PC em hex
