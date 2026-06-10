@@ -16,12 +16,7 @@ set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
 
 # ---- Arquivos VHDL ----
-set_global_assignment -name VHDL_FILE src/ula_fullAdder.vhd
-set_global_assignment -name VHDL_FILE src/ula_logicUnit.vhd
-set_global_assignment -name VHDL_FILE src/ula_1bit.vhd
-set_global_assignment -name VHDL_FILE src/ula_32bits.vhd
-set_global_assignment -name VHDL_FILE src/ula_flags.vhd
-set_global_assignment -name VHDL_FILE src/ula.vhd
+set_global_assignment -name VHDL_FILE src/ula_numeric.vhd
 set_global_assignment -name VHDL_FILE src/sign_extender.vhd
 set_global_assignment -name VHDL_FILE src/zero_extender.vhd
 set_global_assignment -name VHDL_FILE src/reg_file_mips.vhd

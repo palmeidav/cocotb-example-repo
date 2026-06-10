@@ -52,7 +52,7 @@ architecture bhv of mips_word_toplevel is
               B_data : out std_logic_vector(31 downto 0));
     end component;
 
-    component ULA is
+    component ula_numeric is
         port (A             : in  std_logic_vector(31 downto 0);
               B             : in  std_logic_vector(31 downto 0);
               control       : in  std_logic_vector(2  downto 0);
@@ -377,7 +377,7 @@ begin
     i_ze : zero_extender
         port map (in_16 => imm16, out_32 => zero_ext_s);
 
-    i_alu : ULA
+    i_alu : ula_numeric
         port map (A => a_data_s, B => alu_b_s, control => alu_op,
                   result => alu_out_s, flag_neg => open,
                   flag_zero => alu_zero_s, flag_overflow => open);
