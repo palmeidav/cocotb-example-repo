@@ -17,11 +17,10 @@ end entity;
 architecture bhv OF mips_ram IS
   type blocoMemoria IS ARRAY(0 TO 63) OF std_logic_vector(31 DOWNTO 0);
 
-  -- Atributo para forcar uso de blocos M10K (memoria dedicada do FPGA)
   attribute ramstyle : string;
-  attribute ramstyle of memRAM : signal is "M10K";
 
   signal memRAM     : blocoMemoria := (others => (others => '0'));
+  attribute ramstyle of memRAM : signal is "M10K";
   signal addr_local : std_logic_vector(5 downto 0);
 
 begin
