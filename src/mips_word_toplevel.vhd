@@ -4,8 +4,11 @@ use ieee.numeric_std.all;
 
 entity mips_word_toplevel is
     port (
-        clk   : in std_logic;
-        reset : in std_logic
+        clk    : in  std_logic;                      -- PIN_AF14  (50 MHz)
+        reset  : in  std_logic;                      -- PIN_AB12  (SW[0])
+        ledr   : out std_logic_vector(9 downto 0);   -- LEDs vermelhos
+        hex0   : out std_logic_vector(6 downto 0);   -- Display 7-seg (PC baixo)
+        hex1   : out std_logic_vector(6 downto 0)    -- Display 7-seg (PC alto)
     );
 end entity;
 
@@ -498,5 +501,49 @@ begin
             half_we  => half_we,
             reset    => reset
         );
+
+    -- -------------------------------------------------------
+    -- Saidas de debug para a FPGA
+    -- LEDs vermelhos: PC[11:2] (qual instrucao esta executando)
+    -- -------------------------------------------------------
+    ledr <= pc(11 downto 2);
+
+    -- Display 7-segmentos: nibble baixo e alto do PC
+    -- Segmentos: gfedcba (ativo em '0' no DE10-Standard)
+    with pc(3 downto 0) select
+        hex0 <= "1000000" when x"0",  -- 0
+                "1111001" when x"1",  -- 1
+                "0100100" when x"2",  -- 2
+                "0110000" when x"3",  -- 3
+                "0011001" when x"4",  -- 4
+                "0010010" when x"5",  -- 5
+                "0000010" when x"6",  -- 6
+                "1111000" when x"7",  -- 7
+                "0000000" when x"8",  -- 8
+                "0010000" when x"9",  -- 9
+                "0001000" when x"A",  -- A
+                "0000011" when x"B",  -- b
+                "1000110" when x"C",  -- C
+                "0100001" when x"D",  -- d
+                "0000110" when x"E",  -- E
+                "0001110" when others; -- F
+
+    with pc(7 downto 4) select
+        hex1 <= "1000000" when x"0",
+                "1111001" when x"1",
+                "0100100" when x"2",
+                "0110000" when x"3",
+                "0011001" when x"4",
+                "0010010" when x"5",
+                "0000010" when x"6",
+                "1111000" when x"7",
+                "0000000" when x"8",
+                "0010000" when x"9",
+                "0001000" when x"A",
+                "0000011" when x"B",
+                "1000110" when x"C",
+                "0100001" when x"D",
+                "0000110" when x"E",
+                "0001110" when others;
 
 end architecture;
