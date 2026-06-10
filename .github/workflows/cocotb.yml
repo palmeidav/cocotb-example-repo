@@ -1,42 +1,58 @@
 name: Cocotb
 
 on:
-  workflow_dispatch: {}
-  push:
-    paths:
-      - .github/workflows/cocotb.yml
-      - src/**
-      - test/**
+workflow_dispatch: {}
+push:
+  paths:
+    - .github/workflows/cocotb.yml
+    - src/**
+    - test/**
 
 jobs:
-  cocotb:
-    name: Cocotb (${{ matrix.name }})
-    runs-on: ubuntu-latest
-    container:
-      image: rafaelcorsi/pl-descomp-cocotb:latest
-      options: -v ${{ github.workspace }}:/var/www
+cocotb:
+  name: Cocotb (${{ matrix.name }})
+  runs-on: ubuntu-latest
+  container:
+    image: rafaelcorsi/pl-descomp-cocotb:latest
+    options: -v ${{ github.workspace }}:/var/www
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: ROM
-            toplevel: mips_rom
-            module: test_mips_rom
-            sources: ../src/mips_rom.vhd
+  strategy:
+    fail-fast: false
+    matrix:
+      include:
+        - name: ROM
+          toplevel: mips_rom
+          module: test_mips_rom
+          sources: ../src/mips_rom.vhd
 
-          - name: RAM
-            toplevel: mips_ram
-            module: test_mips_ram
-            sources: ../src/mips_ram.vhd
+        - name: RAM
+          toplevel: mips_ram
+          module: test_mips_ram
+          sources: ../src/mips_ram.vhd
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+        - name: ULA
+          toplevel: ULA
+          module: test_ula
+          sources: >-
+            ../src/ula_fullAdder.vhd
+            ../src/ula_logicUnit.vhd
+            ../src/ula_1bit.vhd
+            ../src/ula_32bits.vhd
+            ../src/ula_flags.vhd
+            ../src/ula.vhd
 
-      - name: Run cocotb test (${{ matrix.name }})
-        run: |
-          make -C /var/www/test/ \
-            TOPLEVEL=${{ matrix.toplevel }} \
-            MODULE=${{ matrix.module }} \
-            VHDL_SOURCES=${{ matrix.sources }}
+        - name: RegFile
+          toplevel: reg_file_mips
+          module: test_reg_file
+          sources: ../src/reg_file_mips.vhd
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Run cocotb test (${{ matrix.name }})
+      run: |
+        make -C /var/www/test/ \
+          TOPLEVEL=${{ matrix.toplevel }} \
+          MODULE=${{ matrix.module }} \
+          VHDL_SOURCES=${{ matrix.sources }}
