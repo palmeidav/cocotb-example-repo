@@ -15,22 +15,23 @@ entity mips_ram IS
 end entity;
 
 architecture bhv OF mips_ram IS
-  type blocoMemoria IS ARRAY(0 TO 1023) OF std_logic_vector(31 DOWNTO 0);
+  type blocoMemoria IS ARRAY(0 TO 63) OF std_logic_vector(31 DOWNTO 0);
+
+  -- Atributo para forcar uso de blocos M10K (memoria dedicada do FPGA)
+  attribute ramstyle : string;
+  attribute ramstyle of memRAM : signal is "M10K";
 
   signal memRAM     : blocoMemoria := (others => (others => '0'));
-  signal addr_local : std_logic_vector(9 downto 0);
+  signal addr_local : std_logic_vector(5 downto 0);
 
 begin
 
-  addr_local <= addr(11 downto 2);
+  addr_local <= addr(7 downto 2);
 
-  process(clk, reset)
+  process(clk)
     variable idx : integer;
   begin
-      if reset = '1' then
-          memRAM <= (others => (others => '0'));
-
-      elsif rising_edge(clk) then
+      if rising_edge(clk) then
           idx := to_integer(unsigned(addr_local));
 
           if word_we = '1' then

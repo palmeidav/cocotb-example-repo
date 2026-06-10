@@ -17,6 +17,10 @@ architecture bhv of mips_rom is
 
   type blocoMemoria is array(0 TO 2**addrWidth - 1) of std_logic_vector(dataWidth-1 DOWNTO 0);
 
+  -- Atributo para forcar uso de blocos M10K (memoria dedicada do FPGA)
+  attribute rom_style : string;
+  attribute rom_style of memROM : signal is "M10K";
+
   function initMemory
         return blocoMemoria is variable tmp : blocoMemoria := (others => (others => '0'));
   begin
