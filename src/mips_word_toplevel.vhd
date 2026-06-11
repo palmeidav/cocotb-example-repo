@@ -140,6 +140,7 @@ architecture bhv of mips_word_toplevel is
     signal is_shift     : std_logic;
     signal shift_left_f : std_logic;
     signal is_sltu      : std_logic;
+    signal is_slt       : std_logic;
     signal is_sltiu     : std_logic;
     signal is_lbu       : std_logic;
     signal is_lhu       : std_logic;
@@ -204,6 +205,7 @@ begin
         is_shift     <= '0';
         shift_left_f <= '0';
         is_sltu      <= '0';
+        is_slt       <= '0';
         is_sltiu     <= '0';
         is_lbu       <= '0';
         is_lhu       <= '0';
@@ -214,12 +216,15 @@ begin
                 rd_src       <= '1';
                 write_enable <= '1';
                 case funct is
+                    when "100000" => alu_op <= "010";             -- add  (bonus)
                     when "100001" => alu_op <= "010";             -- addu
+                    when "100010" => alu_op <= "011";             -- sub  (bonus)
                     when "100011" => alu_op <= "011";             -- subu
                     when "100100" => alu_op <= "100";             -- and
                     when "100101" => alu_op <= "101";             -- or
                     when "100110" => alu_op <= "111";             -- xor
                     when "100111" => alu_op <= "110";             -- nor
+                    when "101010" => is_slt  <= '1';              -- slt  (bonus)
                     when "101011" => is_sltu <= '1';              -- sltu
                     when "000000" => is_shift <= '1'; shift_left_f <= '1'; -- sll
                     when "000010" => is_shift <= '1';             -- srl
@@ -229,6 +234,9 @@ begin
                         control_type <= "11";
                     when others => null;
                 end case;
+
+            when "001000" =>  -- addi (bonus)
+                write_enable <= '1'; alu_src2 <= "01";
 
             when "001001" =>  -- addiu
                 write_enable <= '1'; alu_src2 <= "01";
@@ -285,6 +293,7 @@ begin
     -- SLTU / SLTIU
     -- ----------------------------------------------------------
     slt_result_s <=
+        x"00000001" when (is_slt   = '1' and   signed(a_data_s) <   signed(b_data_s))   else
         x"00000001" when (is_sltu  = '1' and unsigned(a_data_s) < unsigned(b_data_s))   else
         x"00000001" when (is_sltiu = '1' and unsigned(a_data_s) < unsigned(sign_ext_s)) else
         x"00000000";
@@ -388,7 +397,7 @@ begin
     -- ----------------------------------------------------------
     w_data_s <= pc_plus4        when is_jal   = '1' else
                 mem_wb_s        when mem_read  = '1' else
-                slt_result_s    when (is_sltu or is_sltiu) = '1' else
+                slt_result_s    when (is_slt or is_sltu or is_sltiu) = '1' else
                 shift_result_s  when is_shift  = '1' else
                 alu_out_s;
 
